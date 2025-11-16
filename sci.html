@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgoPlay Quiz Question 2</title>
+    <style>
+        /* Global Reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            box-sizing: border-box;
+        }
+
+        /* --- Main Container and Background --- */
+        #app-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            
+            /* Blue Gradient Background */
+            background: linear-gradient(180deg, #0d47a1 0%, #0099ff 100%);
+            color: white;
+            padding: 0;
+        }
+
+        /* --- Top Header (Question Number) --- */
+        .header {
+            background-color: #e53935; /* Red color matching the image */
+            color: white;
+            padding: 20px 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- Question Text Section --- */
+        .question-section {
+            padding: 20px;
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .question-text {
+            font-size: 1.8em;
+            font-weight: bold;
+            line-height: 1.3;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        /* --- Answer Button Styling --- */
+        .answer-button {
+            background-color: #a9a9a9; /* Gray/Slate color */
+            color: black;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .answer-button:hover {
+            filter: brightness(1.1);
+        }
+
+        .answer-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Styles for correct/incorrect feedback */
+        .correct {
+            background-color: #4CAF50 !important; /* Green */
+            color: white !important;
+        }
+
+        .incorrect {
+            background-color: #F44336 !important; /* Red */
+            color: white !important;
+        }
+
+        /* --- Footer Section (Score and Back Button) --- */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: rgba(0, 0, 0, 0.1); 
+        }
+
+        .score-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .back-button {
+            background-color: #558B2F; /* Green/Gray color matching the image */
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: #689F38;
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        
+        <div class="header">
+            <span id="question-number">2. Question</span>
+        </div>
+
+        <div class="question-section">
+            <div class="question-text" id="question-text">
+                If the circumference of a circle is $12\pi$ units, what is its radius?
+            </div>
+
+            <button class="answer-button" data-answer="a" onclick="checkAnswer(this, 'a')">
+                a) 3
+            </button>
+            <button class="answer-button" data-answer="b" onclick="checkAnswer(this, 'b')">
+                b) 6
+            </button>
+            <button class="answer-button" data-answer="c" onclick="checkAnswer(this, 'c')">
+                c) 13
+            </button>
+            <button class="answer-button" data-answer="d" onclick="checkAnswer(this, 'd')">
+                d) 12
+            </button>
+        </div>
+
+        <div class="footer">
+            <div class="score-text">Score: <span id="current-score">0</span>/4</div>
+            <button class="back-button" onclick="goBack()">Back</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Quiz Logic ---
+        // Circumference (C) = 2πr. If C = 12π, then 2r = 12, so r = 6.
+        const CORRECT_ANSWER = 'b'; // The correct answer is b) 6
+        let score = 0; // In a real app, this should be loaded from session/local storage
+        let answered = false;
+        
+        /**
+         * Checks the selected answer and updates the score and feedback.
+         * @param {HTMLElement} button - The button element clicked.
+         * @param {string} selectedAnswer - The letter of the selected answer.
+         */
+        function checkAnswer(button, selectedAnswer) {
+            if (answered) {
+                return;
+            }
+            
+            answered = true;
+            
+            const buttons = document.querySelectorAll('.answer-button');
+            buttons.forEach(btn => btn.disabled = true); 
+            
+            if (selectedAnswer === CORRECT_ANSWER) {
+                // Correct Answer Logic
+                button.classList.add('correct');
+                // Since this is the 2nd question, we'll assume a score of 1 before this, making total 2.
+                score = 2; 
+                document.getElementById('current-score').textContent = score;
+                setTimeout(() => alert("Correct! The radius is 6 units. Moving to the next question/end."), 500);
+            } else {
+                // Incorrect Answer Logic
+                button.classList.add('incorrect');
+                // Highlight the correct answer
+                document.querySelector(`.answer-button[data-answer="${CORRECT_ANSWER}"]`).classList.add('correct');
+                setTimeout(() => alert("Incorrect. The correct answer is (b) 6."), 500);
+            }
+            
+            // Simulate quiz end or moving to the next question
+            setTimeout(goToNextStep, 2000); 
+        }
+        
+        /**
+         * Simulates navigation to the next step (Quiz End or Question 3).
+         */
+        function goToNextStep() {
+            alert("End of the quiz sequence for this demo. Final Score: 2/4 (Simulated)");
+            console.log("Quiz sequence ended.");
+            // In a real app, you would redirect to the results page: 
+            // window.location.href = "quiz_results.html"; 
+        }
+
+        /**
+         * Simulates going back to the previous screen (e.g., Question 1 or the dashboard).
+         */
+        function goBack() {
+            alert("Returning to the previous screen (Question 1).");
+            // In a real app, you would use: window.history.back() or window.location.href = "quiz1.html";
+        }
+    </script>
+</body>
+</html>
