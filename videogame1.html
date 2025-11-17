@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Video Quiz Game</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .game-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.6s ease;
+    }
+
+    /* Video shrink effect */
+    .video-small {
+        width: 350px !important;
+        height: 350px !important;
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 15px;
+        object-fit: cover;
+        box-shadow: 0 0 20px rgba(255,255,255,0.4);
+    }
+
+    #questionBox {
+        display: none;
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .option {
+        display: block;
+        width: 90%;
+        padding: 12px;
+        margin: 10px auto;
+        background: #2979ff;
+        color: white;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .nav-btn {
+        padding: 10px 15px;
+        background: #222;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 45%;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="game-container">
+
+    <video id="gameVideo" autoplay muted>
+        <source src="videogame.mp4" type="video/mp4">
+    </video>
+
+    <div id="questionBox">
+        <h2 id="questionText"></h2>
+
+        <button class="option" onclick="checkAnswer('A')">A</button>
+        <button class="option" onclick="checkAnswer('B')">B</button>
+        <button class="option" onclick="checkAnswer('C')">C</button>
+        <button class="option" onclick="checkAnswer('D')">D</button>
+
+        <p id="result"></p>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="backBtn">⬅ Back</button>
+            <button class="nav-btn" id="nextBtn">Next ➡</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+const video = document.getElementById("gameVideo");
+const questionBox = document.getElementById("questionBox");
+const resultText = document.getElementById("result");
+
+let question = {
+    q: "What is the capital of India?",
+    opts: { A: "Mumbai", B: "New Delhi", C: "Hyderabad", D:"Odisha" },
+    answer: "B",
+    hint: "Hint: It starts with NEW."
+};
+
+function loadQuestion() {
+    document.getElementById("questionText").innerText = question.q;
+
+    let opt = document.getElementsByClassName("option");
+    opt[0].innerText = question.opts.A;
+    opt[1].innerText = question.opts.B;
+    opt[2].innerText = question.opts.C;
+    opt[3].innerText = question.opts.D;
+
+    resultText.innerText = "";
+}
+
+function showQuestion() {
+    video.pause();
+    video.classList.add("video-small");
+    loadQuestion();
+    questionBox.style.display = "block";
+}
+
+setTimeout(showQuestion, 8000);
+
+function checkAnswer(a) {
+    if (a === question.answer) {
+        resultText.style.color = "green";
+        resultText.innerText = "Correct!";
+    } 
+    else {
+        resultText.style.color = "red";
+        resultText.innerText = "Wrong! " + question.hint;
+    }
+}
+
+/* Navigation buttons */
+document.getElementById("nextBtn").addEventListener("click", () => {
+    window.location.href = "stulog.html";
+});
+
+document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.href = "game2.html";
+});
+
+</script>
+
+</body>
+</html>
