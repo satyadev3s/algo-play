@@ -53,7 +53,7 @@ body,html{margin:0;padding:0;height:100%;font-family:'Segoe UI',Roboto,Arial}
     <div class="footer">
         <div>Score: <span id="score">0</span>/4</div>
         <div style="display:flex;gap:10px">
-            <button id="back" class="back-button" onclick="back()">← Back</button>
+            <button id="back" class="back-button" onclick="back()" disabled>← Back</button>
             <button id="next" class="next-button" onclick="nextQ()">Next →</button>
         </div>
     </div>
@@ -127,21 +127,10 @@ function render(){
  });
 
  nextBtn.classList[q.user?"add":"remove"]("show");
+ backBtn.disabled = index===0;
+
  timerBox.textContent = q.remaining;
-
  startTimer();
-}
-
-/* ---- FIXED BACK BUTTON ---- */
-function back(){
- stopTimer();
-
- if(index === 0){
-     location.href = "scilevel.html";   // GO TO LEVEL PAGE
- } else {
-     index--;
-     render();   // GO TO PREVIOUS QUESTION
- }
 }
 
 function startTimer(){
@@ -199,6 +188,11 @@ function nextQ(){
  stopTimer();
  if(index < Q.length-1){ index++; render(); }
  else finish();
+}
+
+function back(){
+ stopTimer();
+ if(index>0){ index--; render(); }
 }
 
 function finish(){

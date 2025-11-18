@@ -1,503 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgoPlay Technology Quiz</title>
-    <style>
-        /* Global Reset */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            box-sizing: border-box;
-        }
-
-        /* --- Main Container and Background --- */
-        #app-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            color: white;
-            padding: 0;
-            animation: bgShift 8s ease infinite;
-        }
-
-        @keyframes bgShift {
-            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
-            50% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%); }
-        }
-
-        /* --- Top Header (Question Number) --- */
-        .header {
-            background: linear-gradient(90deg, #a855f7 0%, #7c3aed 100%);
-            color: white;
-            padding: 24px 20px;
-            font-size: 1.6rem;
-            font-weight: 900;
-            text-align: left;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            animation: slideDown 0.6s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- Question Text Section --- */
-        .question-section {
-            padding: 30px 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            overflow-y: auto;
-            animation: fadeIn 0.8s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .question-text {
-            font-size: 2rem;
-            font-weight: 900;
-            line-height: 1.4;
-            margin-bottom: 24px;
-            color: #ffffff;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            animation: slideInQuestion 0.7s ease;
-        }
-
-        @keyframes slideInQuestion {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- Answer Button Styling --- */
-        .answer-button {
-            background: linear-gradient(135deg, #b0bec5 0%, #90a4ae 100%);
-            color: #1a1a1a;
-            padding: 18px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            animation: slideInButton 0.6s ease;
-            animation-fill-mode: both;
-        }
-
-        .answer-button:nth-child(2) { animation-delay: 0.1s; }
-        .answer-button:nth-child(3) { animation-delay: 0.2s; }
-        .answer-button:nth-child(4) { animation-delay: 0.3s; }
-        .answer-button:nth-child(5) { animation-delay: 0.4s; }
-
-        @keyframes slideInButton {
-            from {
-                opacity: 0;
-                transform: translateX(-40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .answer-button:hover:not(:disabled) {
-            transform: translateY(-6px);
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #cfd8dc 0%, #b0bec5 100%);
-        }
-
-        .answer-button:active:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .answer-button:disabled {
-            cursor: not-allowed;
-            opacity: 0.9;
-        }
-        
-        /* Correct/Incorrect Feedback */
-        .correct {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-            color: white !important;
-            animation: correctPulse 0.6s ease;
-        }
-
-        .incorrect {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-            color: white !important;
-            animation: shake 0.5s ease;
-        }
-
-        @keyframes correctPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-
-        /* --- Footer Section --- */
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px;
-            background: linear-gradient(90deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
-            gap: 15px;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.6s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .score-text {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #fbbf24;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 12px;
-        }
-
-        .back-button, .next-button {
-            color: white;
-            padding: 14px 32px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .back-button {
-            background: linear-gradient(135deg, #558B2F 0%, #33691e 100%);
-        }
-
-        .back-button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(135deg, #689F38 0%, #558B2F 100%);
-        }
-
-        .back-button:active {
-            transform: translateY(-1px);
-        }
-
-        .next-button {
-            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
-            display: none;
-            animation: slideInNext 0.5s ease;
-        }
-
-        .next-button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(135deg, #42a5f5 0%, #1976D2 100%);
-        }
-
-        .next-button:active {
-            transform: translateY(-1px);
-        }
-
-        .next-button.show {
-            display: block;
-        }
-
-        @keyframes slideInNext {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Progress bar */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #a78bfa, #7c3aed);
-            transition: width 0.5s ease;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tech — Level 1</title>
+<style>
+:root{--bg:linear-gradient(135deg,#1e3c72,#2a5298,#7e8ba3);}
+html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,Arial}
+#app{height:100vh;display:flex;flex-direction:column;background:var(--bg);color:#fff}
+.header{padding:20px;background:linear-gradient(90deg,#e74c3c,#c0392b);display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.progress-bar{height:6px;background:rgba(255,255,255,.18)}
+.progress-fill{height:100%;width:25%;transition:width .35s;background:linear-gradient(90deg,#2ecc71,#27ae60)}
+.content{padding:22px;flex:1;overflow:auto}
+.question-text{font-size:1.6rem;font-weight:900;margin-bottom:18px}
+.answer-button{display:block;width:100%;padding:14px;margin-bottom:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#b0bec5,#90a4ae);color:#111;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(0,0,0,.15);transition:transform .18s,background .18s}
+.answer-button:disabled{cursor:not-allowed;opacity:.95}
+.correct{background:linear-gradient(135deg,#27ae60,#229954)!important;color:#fff}
+.incorrect{background:linear-gradient(135deg,#e74c3c,#c0392b)!important;color:#fff}
+.footer{display:flex;justify-content:space-between;align-items:center;padding:16px;background:linear-gradient(90deg,rgba(0,0,0,.12),rgba(0,0,0,.06))}
+.btn-small{padding:10px 14px;border-radius:10px;border:none;font-weight:900;color:#fff;cursor:pointer}
+.back{background:linear-gradient(135deg,#558B2F,#33691e)}
+.next{background:linear-gradient(135deg,#1976D2,#1565C0);display:none}
+.next.show{display:inline-block}
+.timer{font-weight:900}
+</style>
 </head>
 <body>
-   <div id="app-container">
-        
-    <div class="header">
-        <span id="question-number" data-i18n="quiz_q1_title">💻 1. Question</span>
+<div id="app">
+  <div class="header">
+    <div id="question-number">💻 1. Question</div>
+    <div>⏳ <span id="timer">30</span>s</div>
+  </div>
+
+  <div class="progress-bar"><div id="progress-fill" class="progress-fill" style="width:25%"></div></div>
+
+  <div class="content">
+    <div id="question-text" class="question-text">Loading…</div>
+
+    <button class="answer-button" data-answer="a" onclick="selectAnswer(this,'a')"></button>
+    <button class="answer-button" data-answer="b" onclick="selectAnswer(this,'b')"></button>
+    <button class="answer-button" data-answer="c" onclick="selectAnswer(this,'c')"></button>
+    <button class="answer-button" data-answer="d" onclick="selectAnswer(this,'d')"></button>
+  </div>
+
+  <div class="footer">
+    <div>Score: <strong id="current-score">0</strong>/<span id="total-questions">4</span></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="back-button" class="btn-small back" onclick="goBack()" disabled>← Back</button>
+      <button id="next-button" class="btn-small next" onclick="goNext()">Next →</button>
     </div>
-
-    <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width: 25%;"></div>
-    </div>
-
-    <div class="question-section">
-        <div class="question-text" id="question-text" data-i18n="quiz_q1_question">
-            What does HTML stand for?
-        </div>
-
-        <button class="answer-button" onclick="checkAnswer(this, 'a')" data-i18n="quiz_q1_opt_a">
-            a) Hyper Text Markup Language
-        </button>
-
-        <button class="answer-button" onclick="checkAnswer(this, 'b')" data-i18n="quiz_q1_opt_b">
-            b) High Tech Modern Language
-        </button>
-
-        <button class="answer-button" onclick="checkAnswer(this, 'c')" data-i18n="quiz_q1_opt_c">
-            c) Home Tool Markup Language
-        </button>
-
-        <button class="answer-button" onclick="checkAnswer(this, 'd')" data-i18n="quiz_q1_opt_d">
-            d) Hyperlinks and Text Markup Language
-        </button>
-    </div>
-
-    <div class="footer">
-        <div class="score-text">
-            <span data-i18n="quiz_score">Score:</span> 
-            <span id="current-score">0</span>/<span id="total-questions">4</span>
-        </div>
-
-        <div class="button-group">
-            <button class="back-button" onclick="goBack()" data-i18n="btn_back">← Back</button>
-            <button class="next-button" id="next-button" onclick="goToNextQuestion()" data-i18n="btn_next">Next →</button>
-        </div>
-    </div>
-
+  </div>
 </div>
 
+<script>
+const TIME_PER_Q = 30; // seconds, per your request (remembers remaining time on back)
+const LEVEL = 1;
+const questions = [
+  { number:1, text:"What does HTML stand for?", answers:[{l:'a',t:'Hyper Text Markup Language'},{l:'b',t:'High Tech Modern Language'},{l:'c',t:'Home Tool Markup Language'},{l:'d',t:'Hyperlinks and Text Markup Language'}], correct:'a', user:null, remaining:TIME_PER_Q },
+  { number:2, text:"Which tag is used for a paragraph?", answers:[{l:'a',t:'<p>'},{l:'b',t:'<para>'},{l:'c',t:'<text>'},{l:'d',t:'<div>'}], correct:'a', user:null, remaining:TIME_PER_Q },
+  { number:3, text:"Which attribute sets the URL for a link?", answers:[{l:'a',t:'src'},{l:'b',t:'href'},{l:'c',t:'link'},{l:'d',t:'url'}], correct:'b', user:null, remaining:TIME_PER_Q },
+  { number:4, text:"Which tag creates an unordered list?", answers:[{l:'a',t:'<ol>'},{l:'b',t:'<li>'},{l:'c',t:'<ul>'},{l:'d',t:'<list>'}], correct:'c', user:null, remaining:TIME_PER_Q }
+];
 
-    <script>
-        /**
-         * Technology quiz questions data
-         */
-        const quizQuestions = [
-            {
-                number: 1,
-                text: "What does HTML stand for?",
-                answers: [
-                    { letter: 'a', text: 'Hyper Text Markup Language' },
-                    { letter: 'b', text: 'High Tech Modern Language' },
-                    { letter: 'c', text: 'Home Tool Markup Language' },
-                    { letter: 'd', text: 'Hyperlinks and Text Markup Language' }
-                ],
-                correct: 'a'
-            },
-            {
-                number: 2,
-                text: "What does CSS stand for?",
-                answers: [
-                    { letter: 'a', text: 'Computer Style Sheets' },
-                    { letter: 'b', text: 'Cascading Style Sheets' },
-                    { letter: 'c', text: 'Creative Style System' },
-                    { letter: 'd', text: 'Code Styling Standard' }
-                ],
-                correct: 'b'
-            },
-            {
-                number: 3,
-                text: "Which programming language is known as the language of the web?",
-                answers: [
-                    { letter: 'a', text: 'Python' },
-                    { letter: 'b', text: 'Java' },
-                    { letter: 'c', text: 'JavaScript' },
-                    { letter: 'd', text: 'C++' }
-                ],
-                correct: 'c'
-            },
-            {
-                number: 4,
-                text: "What is the purpose of a variable in programming?",
-                answers: [
-                    { letter: 'a', text: 'To store data values' },
-                    { letter: 'b', text: 'To create loops' },
-                    { letter: 'c', text: 'To define functions' },
-                    { letter: 'd', text: 'To create comments' }
-                ],
-                correct: 'a'
-            }
-        ];
+let state = { idx:0, timerInterval:null };
 
-        // --- Quiz State ---
-        let currentQuestion = 0;
-        let score = 0;
-        let answered = false;
-        let CORRECT_ANSWER = quizQuestions[0].correct;
+const DOM = {
+  qText: document.getElementById('question-text'),
+  buttons: document.querySelectorAll('.answer-button'),
+  nextBtn: document.getElementById('next-button'),
+  backBtn: document.getElementById('back-button'),
+  score: document.getElementById('current-score'),
+  total: document.getElementById('total-questions'),
+  qNum: document.getElementById('question-number'),
+  progress: document.getElementById('progress-fill'),
+  timer: document.getElementById('timer')
+};
 
-        /**
-         * Load and display a question
-         */
-        function loadQuestion(questionIndex) {
-            if (questionIndex >= quizQuestions.length) {
-                showCompletionScreen();
-                return;
-            }
+function render(){
+  const q = questions[state.idx];
+  DOM.qNum.textContent = `💻 ${q.number}. Question`;
+  DOM.qText.textContent = q.text;
+  DOM.total.textContent = questions.length;
+  DOM.score.textContent = questions.filter(x=>x.user===x.correct).length;
+  DOM.progress.style.width = (((state.idx+1)/questions.length)*100) + '%';
+  DOM.buttons.forEach((btn,i) => {
+    const a = q.answers[i];
+    btn.textContent = `${a.l}) ${a.t}`;
+    btn.dataset.answer = a.l;
+    btn.classList.remove('correct','incorrect');
+    btn.disabled = q.user !== null;
+    btn.style.opacity = '1';
+    if(q.user !== null){
+      if(a.l === q.correct) btn.classList.add('correct');
+      else if(a.l === q.user) btn.classList.add('incorrect');
+      else btn.style.opacity = '0.5';
+    }
+  });
+  DOM.nextBtn.classList[q.user !== null ? 'add' : 'remove']('show');
+  DOM.backBtn.disabled = state.idx === 0;
+  DOM.timer.textContent = q.remaining;
+  startTimer();
+}
 
-            const question = quizQuestions[questionIndex];
-            CORRECT_ANSWER = question.correct;
-            answered = false;
+function startTimer(){
+  stopTimer();
+  const q = questions[state.idx];
+  DOM.timer.textContent = q.remaining;
+  if (q.remaining <= 0) { // just in case
+    onTimeUp();
+    return;
+  }
+  state.timerInterval = setInterval(() => {
+    q.remaining--;
+    DOM.timer.textContent = q.remaining;
+    if(q.remaining <= 0){
+      stopTimer();
+      onTimeUp();
+    }
+  }, 1000);
+}
 
-            // Update progress bar
-            const progress = ((questionIndex + 1) / quizQuestions.length) * 100;
-            document.getElementById('progress-fill').style.width = progress + '%';
+function stopTimer(){
+  if(state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
+}
 
-            // Update header
-            document.getElementById('question-number').textContent = `💻 ${question.number}. Question`;
+function onTimeUp(){
+  const q = questions[state.idx];
+  if(q.user === null){
+    q.user = 'timeout'; // mark answered wrong
+  }
+  // give short visual feedback then advance
+  DOM.buttons.forEach(b => b.disabled = true);
+  const correctBtn = [...DOM.buttons].find(b => b.dataset.answer === q.correct);
+  if(correctBtn) correctBtn.classList.add('correct');
+  setTimeout(() => {
+    advanceOrFinish();
+  }, 700);
+}
 
-            // Update question text
-            document.getElementById('question-text').textContent = question.text;
+function selectAnswer(btn, choice){
+  const q = questions[state.idx];
+  if(q.user !== null) return;
+  // stop timer immediately (option A)
+  stopTimer();
+  q.user = choice;
+  DOM.buttons.forEach(b => b.disabled = true);
+  if(choice === q.correct) btn.classList.add('correct'); else { btn.classList.add('incorrect'); const correctBtn = [...DOM.buttons].find(b=>b.dataset.answer===q.correct); if(correctBtn) correctBtn.classList.add('correct'); }
+  DOM.score.textContent = questions.filter(x=>x.user===x.correct).length;
+  setTimeout(()=> DOM.nextBtn.classList.add('show'), 400);
+}
 
-            // Update answer buttons
-            const buttons = document.querySelectorAll('.answer-button');
-            buttons.forEach((btn, index) => {
-                btn.textContent = `${question.answers[index].letter}) ${question.answers[index].text}`;
-                btn.setAttribute('data-answer', question.answers[index].letter);
-                btn.classList.remove('correct', 'incorrect');
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            });
+function goNext(){
+  stopTimer();
+  if(state.idx < questions.length -1){ state.idx++; render(); } else { finish(); }
+}
 
-            // Hide Next button
-            document.getElementById('next-button').classList.remove('show');
-        }
+function goBack(){
+  stopTimer();
+  if(state.idx === 0){
+    if(confirm('Exit quiz? Progress will not be saved.')) location.href='dashboard.html';
+    return;
+  }
+  state.idx--;
+  render();
+}
 
-        /**
-         * Checks the selected answer
-         */
-        function checkAnswer(button, selectedAnswer) {
-            if (answered) {
-                return;
-            }
-            
-            answered = true;
-            
-            const buttons = document.querySelectorAll('.answer-button');
-            buttons.forEach(btn => btn.disabled = true);
-            
-            if (selectedAnswer === CORRECT_ANSWER) {
-                button.classList.add('correct');
-                score++;
-                document.getElementById('current-score').textContent = score;
-            } else {
-                button.classList.add('incorrect');
-                const correctBtn = document.querySelector(`.answer-button[data-answer="${CORRECT_ANSWER}"]`);
-                if (correctBtn) {
-                    correctBtn.classList.add('correct');
-                }
-            }
-            
-            // Fade other buttons
-            buttons.forEach(btn => {
-                if (!btn.classList.contains('correct') && !btn.classList.contains('incorrect')) {
-                    btn.style.opacity = '0.5';
-                }
-            });
-            
-            // Show Next button
-            setTimeout(() => {
-                document.getElementById('next-button').classList.add('show');
-            }, 800);
-        }
-        
-        /**
-         * Move to next question
-         */
-        function goToNextQuestion() {
-            currentQuestion++;
-            loadQuestion(currentQuestion);
-        }
+function advanceOrFinish(){
+  if(state.idx < questions.length -1){ state.idx++; render(); } else { finish(); }
+}
 
-        /**
-         * Show completion screen
-         */
-        function showCompletionScreen() {
-            const percentage = (score / quizQuestions.length) * 100;
-            const message = percentage >= 75 ? '🎉 Excellent!' : percentage >= 50 ? '👍 Good!' : '📚 Keep Learning!';
-            
-            alert(`${message}\n\nTechnology Quiz Completed!\n\nFinal Score: ${score}/${quizQuestions.length}\nPercentage: ${percentage.toFixed(1)}%`);
-            
-            sessionStorage.setItem('techQuizScore', score);
-            window.location.href = 'dashboard.html';
-        }
+function finish(){
+  stopTimer();
+  const s = questions.filter(x=>x.user===x.correct).length;
+  const t = questions.length;
+  const pct = (s/t)*100;
+  const msg = pct>=75 ? '🎉 Excellent!' : pct>=50 ? '👍 Good!' : '📚 Keep Learning!';
+  alert(`${msg}\n\nLevel ${LEVEL} Completed!\nFinal Score: ${s}/${t}\n${pct.toFixed(1)}%`);
+  sessionStorage.setItem(`level${LEVEL}_completed`, 'true');
+sessionStorage.setItem("completedLevel", LEVEL);   // 💥 REQUIRED for unlocking next level
+location.href = 'techlevel.html';
 
-        /**
-         * Go back to dashboard
-         */
-        function goBack() {
-            if (confirm("Are you sure you want to exit the quiz? Your progress will not be saved.")) {
-                window.location.href = 'dashboard.html';
-            }
-        }
+}
 
-        // --- Initialize ---
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('total-questions').textContent = quizQuestions.length;
-            loadQuestion(currentQuestion);
-        });
-    </script>
-    <script src="lang.js"></script>
-
+document.addEventListener('DOMContentLoaded', ()=>{ render(); });
+</script>
 </body>
 </html>
